@@ -1,9 +1,15 @@
+#include <ArduinoBLE.h>
+
+
+
+const int ledPin = 13; // pin to use for the LED
+
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
+
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
 }
