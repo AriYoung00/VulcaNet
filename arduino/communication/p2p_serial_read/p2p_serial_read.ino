@@ -15,37 +15,28 @@ Visit http://www.arduino.cc to learn more about Arduino.
 */
 
 //analog input pin constant
-const int tempPin = 0;
+const int inputPin = 0;
 
 //raw reading variable
-int tempVal;
-
-//voltage variable
-float volts;
-
-//final temperature variables
-float tempC;
-float tempF;
+int inputVal;
 
 void setup()
 {
   // start the serial port at 9600 baud
   Serial.begin(9600);
+  pinMode(inputPin, INPUT);
 }
 
 
 void loop()
 {
  //read the temp sensor and store it in tempVal
- tempVal = analogRead(tempPin);
+ inputVal = analogRead(inputPin);
 
  //print out the 10 value from analogRead
- Serial.print("TempVal = ");
- Serial.print(tempVal);
+ Serial.print("Input Val = ");
+ Serial.println(inputVal);
 
- //print a spacer  
- Serial.print(" **** ");
-
-//wait a bit before taking another reading
-delay(1000);
+ //wait a bit before taking another reading
+ delay(500);
 }
