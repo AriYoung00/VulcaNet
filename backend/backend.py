@@ -24,7 +24,7 @@ def sensors_list():
 # this gets information for all values of any sensor of type <sensor>
 @app.route("/sensors/get_sensor/<sensor>", methods=["POST"])
 def get_sensor(sensor):
-    # check if post request body has a cutoff for values to return
+# check if post request body has a cutoff for values to return
     try:
         min_date = request.data['min_date'];
     except KeyError:
