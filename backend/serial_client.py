@@ -59,6 +59,7 @@ def handle_msg_rcv(msg):
             db.risk.update_one({"mostRecent": {"$exists": True}},
                                {"$set": {"score": risk}})
 
+
 def handle_update_nodes(msg):
     num_nodes = msg[1]
     db.risk.update_one({"numNodes": {"$exists": True}},

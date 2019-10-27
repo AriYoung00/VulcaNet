@@ -10,7 +10,7 @@ mongo = PyMongo(app)
 
 
 # endpoint that lists available sensors
-@app.route("/sensors/list", methods=["POST", "GET"])
+@app.route("/sensors/list/", methods=["POST", "GET"])
 def sensors_list():
     data = mongo.db.data.find({
         "dataTypes": {"$exists": True}
@@ -49,13 +49,13 @@ def get_sensor(sensor):
     return json.dumps({"dataValues": dict_arr})
 
 
-@app.route("/sensors/active_num")
+@app.route("/sensors/active_num/")
 def active_sensors():
-    data = mongo.db.data.find({
-        "dataTypes": {"$exists": True}
+    data = mongo.db.risk.find({
+        "numNodes": {"$exists": True}
     })
 
-    return data[0]["numNodes"]
+    return data[0]['numNodes']
 
 
 @app.route("/fire/get_prob/", methods=(["POST"]))
