@@ -60,8 +60,6 @@ def handle_msg_rcv(msg):
                                {"$set": {"score": risk}})
 
 
-
-
 def main():
     ino = serial.Serial("/dev/ttyUSB0", 115200, timeout=1)
 

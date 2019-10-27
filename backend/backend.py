@@ -49,10 +49,10 @@ def get_sensor(sensor):
     return json.dumps({"dataValues": dict_arr})
 
 
-@app.route("/fire/get_prob/", methods=(["GET"]))
+@app.route("/fire/get_prob/", methods=(["POST"]))
 def get_prob():
     data = mongo.db.risk.find({"mostRecent": {"$exists": True}})
 
-    return json.dumps({'score': str(data[0]['score'])})
+    return "%.2f" % data[0]['score']
 
 
