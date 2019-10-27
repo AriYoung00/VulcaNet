@@ -22,7 +22,7 @@ def sensors_list():
         return json.dumps({'dataTypes': []})
 
 # this gets information for all values of any sensor of type <sensor>
-@app.route("/sensors/get_sensor/<sensor>", methods=["POST"])
+@app.route("/sensors/get_sensor/<sensor>", methods=["GET"])
 def get_sensor(sensor):
 # check if post request body has a cutoff for values to return
     try:
@@ -50,4 +50,28 @@ def get_sensor(sensor):
     # return json.dumps({"dataVals": [item for item in data]})
 
     return json.dumps({"dataValues": dict_arr})
+
+
+@app.route("/sensors/add_data/<sensor>", methods=(["POST"]))
+def add_data(sensor):
+    data = mongo.db.data.sensorTypes.find({'sensor': sensor})
+    timeReceived = request.json['timeReceived']
+    values = request.json['values']
+
+    return json.dumps({''})
+
+
+@app.route("/fire/get_prob/", methods=(["GET"]))
+def get_prob():
+    data = mongo.db.data.find({'fireProbability'})
+    res = json.dumps({'fireProbability': data['fireProbability']})
+    return res
+
+
+@app.route("/fire/update_prob/", methods=(["POST"]))
+def update_prob():
+    data = mongo.db.data
+    prob = request.json['fireProbability']
+    prob_id = data.update({'fireProbability', prob})
+    return json.dumps({'result': prob})
 
