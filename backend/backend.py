@@ -49,6 +49,15 @@ def get_sensor(sensor):
     return json.dumps({"dataValues": dict_arr})
 
 
+@app.route("/sensors/active_num")
+def active_sensors():
+    data = mongo.db.data.find({
+        "dataTypes": {"$exists": True}
+    })
+
+    return data[0]["numNodes"]
+
+
 @app.route("/fire/get_prob/", methods=(["POST"]))
 def get_prob():
     data = mongo.db.risk.find({"mostRecent": {"$exists": True}})
