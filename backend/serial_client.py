@@ -2,8 +2,12 @@ import serial
 import pymongo
 import time
 
+import fire_risk
+
 client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
 db = client["fire"]
+
+update_build = {}
 
 
 def get_categories():
@@ -35,14 +39,27 @@ def add_category(category):
 
 
 def handle_msg_rcv(msg):
+    global update_build
+
     stamp = int(time.time())
     data = msg[2].split(".")
 
     for i in range(0, len(data), 2):
+        if data[i] != "groveTemp" and data[i] != "sparkTVOC":
+            update_build[data[i]] = int(data[i+1])
         if data[i] not in get_categories():
             add_category(data[i])
 
         db.data.insert_one({"timestamp": stamp, "sensorType": data[i], "sensorData": int(data[i+1])})
+
+        if len(update_build) == 4:
+            risk = 100 * fire_risk.calculate_risk(update_build['adaAlt'], update_build['adaTemp'],
+                                                  update_build['adaBaro'], update_build['sparkCO2'])
+            update_build = {}
+            db.risk.update_one({"mostRecent": {"$exists": True}},
+                               {"$set": {"score": risk}})
+
+
 
 
 def main():

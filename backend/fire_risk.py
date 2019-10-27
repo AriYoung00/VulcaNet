@@ -75,7 +75,7 @@ def calculate_risk(altitude, temperature, pressure, air_qual):
 
     print("contribution from altitude + temperature + pressure + air_qual: {}".format(total))
 
-    return total
+    return total if total > 0 else 0
 
 
 def test():
