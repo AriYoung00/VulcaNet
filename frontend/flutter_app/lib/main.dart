@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 import 'graph_view.dart';
 
@@ -23,12 +26,37 @@ class FireProb extends StatefulWidget {
 }
 
 class _FireProbState extends State<FireProb> {
-  double fireProb = 10.0;
+  String url = "http://192.168.43.189:1234/fire/get_prob/";
+  String data;
+  double fireProb = 0.0;
+
+  Future sleep5() {
+    return new Future.delayed(const Duration(seconds:10));
+  }
+
+  Future<String> getProb() async {
+    var res = await http.post(
+      Uri.encodeFull(url),
+      //headers: {"Content-type": "application/json"}
+    );
+
+    setState(() {
+      data = (res.body);
+    });
+
+    new Future.delayed(const Duration(seconds: 10));
+    return "Success";
+  }
+
+  void setFireProb(String data) {
+    if (data != null && data.length >= 1)
+      fireProb = double.parse(data);
+  }
 
   Color pickColor(double prob) {
-    if (prob < 3.0)
+    if (prob < 30.0)
       return Colors.green;
-    if (prob < 7.0)
+    if (prob < 70.0)
       return Colors.yellow;
 
     return Colors.red;
@@ -36,12 +64,15 @@ class _FireProbState extends State<FireProb> {
 
   @override
   Widget build(BuildContext context) {
+    getProb();
+    setFireProb(data);
+
     return Text(
-      fireProb.toString(),
+      data,
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 30.0,
-        color: pickColor(fireProb),
+        color: pickColor((fireProb)),
       ),
     );
   }
