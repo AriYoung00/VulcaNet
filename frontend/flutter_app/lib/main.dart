@@ -5,17 +5,20 @@ import 'dart:async';
 
 import 'graph_view.dart';
 
+const String url = "http://192.168.43.189:1234";
+const String url_eduroam = "http://169.228.184.139:1234";
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FireMesh',
+      title: 'VulcaNet',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'FireMesh'),
+      home: MyHomePage(title: 'VulcaNet'),
     );
   }
 }
@@ -26,17 +29,19 @@ class FireProb extends StatefulWidget {
 }
 
 class _FireProbState extends State<FireProb> {
-  String url = "http://192.168.43.189:1234/fire/get_prob/";
   String data;
   double fireProb = 0.0;
 
-  Future sleep5() {
-    return new Future.delayed(const Duration(seconds:10));
+  @override
+  void initState() {
+    super.initState();
+    const delay = const Duration(seconds: 1);
+    new Timer.periodic(delay, (Timer t) => getProb());
   }
 
   Future<String> getProb() async {
     var res = await http.post(
-      Uri.encodeFull(url),
+      Uri.encodeFull(url + "/fire/get_prob/"),
       //headers: {"Content-type": "application/json"}
     );
 
@@ -44,7 +49,6 @@ class _FireProbState extends State<FireProb> {
       data = (res.body);
     });
 
-    new Future.delayed(const Duration(seconds: 10));
     return "Success";
   }
 
@@ -64,7 +68,7 @@ class _FireProbState extends State<FireProb> {
 
   @override
   Widget build(BuildContext context) {
-    getProb();
+//    getProb();
     setFireProb(data);
 
     return Text(
@@ -88,6 +92,49 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String sensorNum = "0";
+  List<dynamic> sensorList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    const delay = const Duration(seconds: 1);
+    new Timer.periodic(delay, (Timer t) => getSensorsNum());
+    new Timer.periodic(delay, (Timer t) => getSensors());
+  }
+
+  Future<String> getSensorsNum() async {
+    var res = await http.get(
+      Uri.encodeFull(url + "/sensors/active_num/"),
+    );
+
+    setState(() {
+      sensorNum = (res.body);
+    });
+
+    print("SENSOR NUMBER");
+    print(sensorNum);
+    return "Success";
+  }
+
+  Future<String> getSensors() async {
+    var res = await http.post(
+      Uri.encodeFull(url + "/sensors/list/"),
+      headers: {"Content-type": "application/json"}
+    );
+
+    setState(() {
+      sensorList = json.decode(res.body)['dataTypes'];
+    });
+    print("SENSOR LIST");
+    print(sensorList);
+    return "Success";
+  }
+
+  Widget buildBody(BuildContext ctxt, int index) {
+    return new Center(child: Text(sensorList[index]));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,8 +159,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 FireProb(),
               ]
             ),
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Active Sensors:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      itemCount: int.parse(sensorNum),
+                      itemBuilder: (BuildContext ctxt, int index) => buildBody(ctxt, index),
+                    ),
+                  ),
+                ],
+              )
+            ),
             RaisedButton(
-              child: Text('Sensor Data'),
+              child: Text('Manage Sensors'),
               padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
               color: Colors.blue,
               onPressed: () {
