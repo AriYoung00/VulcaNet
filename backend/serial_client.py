@@ -60,6 +60,12 @@ def handle_msg_rcv(msg):
                                {"$set": {"score": risk}})
 
 
+def handle_update_nodes(msg):
+    num_nodes = msg[1]
+    db.risk.update_one({"numNodes": {"$exists": True}},
+                       {"$set": {"numNodes": num_nodes}})
+
+
 def main():
     ino = serial.Serial("/dev/ttyUSB0", 115200, timeout=1)
 
@@ -67,13 +73,15 @@ def main():
         msg_in = ino.readline().decode("UTF-8").strip('\n')
         if len(msg_in) < 2:
             continue
-        if msg_in[0] == '-' and msg_in[1] == '>':
+        if msg_in[0] == '-' or msg_in[1] == '>':
             print(msg_in)
             continue
         msg_in = msg_in.split(":")
 
         if msg_in[0] == 'msgRcv':
             handle_msg_rcv(msg_in)
+        elif msg_in[0] == 'activeNodes':
+            handle_update_nodes(msg_in)
 
 
 if __name__ == "__main__":

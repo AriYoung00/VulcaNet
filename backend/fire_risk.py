@@ -41,7 +41,7 @@ def calculate_risk(altitude, temperature, pressure, air_qual):
     # contribution decreases as altitude increases
     total += (1/(1 + abs(altitude))) * ALTITUDE_WEIGHT
 
-    print("contribution from altitude: {}".format(total))
+    # print("contribution from altitude: {}".format(total))
 
     TEMPERATURE_WEIGHT = 0.5
     if (temperature < 20):
@@ -51,7 +51,7 @@ def calculate_risk(altitude, temperature, pressure, air_qual):
     else:
         total += ((temperature - 20)/20) * TEMPERATURE_WEIGHT
 
-    print("contribution from altitude + temperature: {}".format(total))
+    # print("contribution from altitude + temperature: {}".format(total))
 
     PRESSURE_WEIGHT = 0.2
     # possibly add another condition to make pressure contribution negative, since
@@ -63,7 +63,7 @@ def calculate_risk(altitude, temperature, pressure, air_qual):
     else:
         total += ((pressure - 760)/40) * PRESSURE_WEIGHT
 
-    print("contribution from altitude + temperature + pressure: {}".format(total))
+    # print("contribution from altitude + temperature + pressure: {}".format(total))
 
     AIR_QUAL_WEIGHT = 0.2
     if (air_qual < 400):
@@ -73,7 +73,7 @@ def calculate_risk(altitude, temperature, pressure, air_qual):
     else:
         total += ((air_qual - 400)/600) * AIR_QUAL_WEIGHT
 
-    print("contribution from altitude + temperature + pressure + air_qual: {}".format(total))
+    # print("contribution from altitude + temperature + pressure + air_qual: {}".format(total))
 
     return total if total > 0 else 0
 
